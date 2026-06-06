@@ -17,9 +17,6 @@ app.use(helmet())
 // 2. CORS
 const allowedOrigins = [
     process.env.CORS_ORIGIN,
-    "http://localhost:3000",
-    "http://10.72.17.103:3000",
-    "http://127.0.0.1:3000"
 ];
 
 app.use(cors({

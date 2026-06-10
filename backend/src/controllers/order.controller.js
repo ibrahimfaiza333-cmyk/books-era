@@ -8,10 +8,9 @@ import { Coupon } from "../models/coupon.model.js"
 import { Notification } from "../models/notification.model.js"
 import { User } from "../models/user.model.js"
 
-const FREE_DELIVERY_THRESHOLD = 3000                     // ✅ fixed
-const DELIVERY_CHARGES = 200
+const FREE_DELIVERY_THRESHOLD = 10000            
+const DELIVERY_CHARGES = 300
 
-// ✅ Place Order
 const createOrder = asyncHandler(async (req, res) => {
     const { shippingAddress, paymentMethod, couponCode, note } = req.body
 

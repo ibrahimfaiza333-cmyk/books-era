@@ -34,8 +34,8 @@ const createBook = asyncHandler(async (req, res) => {
     let coverImage        = ""
     let coverImagePublicId = ""
 
-    if (req.files?.coverImage?.[0]?.path) {
-        const uploaded = await uploadOnCloudinary(req.files.coverImage[0].path)
+    if (req.files?.coverImage?.[0]) {
+        const uploaded = await uploadOnCloudinary(req.files.coverImage[0].buffer)
         if (!uploaded) throw new ApiError(500, "Cover image upload failed")
         coverImage         = uploaded.secure_url
         coverImagePublicId = uploaded.public_id
@@ -45,7 +45,8 @@ const createBook = asyncHandler(async (req, res) => {
     let images = []
     if (req.files?.images?.length) {
         for (const file of req.files.images) {
-            const uploaded = await uploadOnCloudinary(file.path)
+            if (!file?.buffer) continue
+           const uploaded = await uploadOnCloudinary(file.buffer)
             if (uploaded) {
                 images.push({
                     url:      uploaded.secure_url,
@@ -141,11 +142,11 @@ const updateBook = asyncHandler(async (req, res) => {
     if (!book) throw new ApiError(404, "Book not found")
 
     // Cover image update
-    if (req.files?.coverImage?.[0]?.path) {
+    if (req.files?.coverImage?.[0]) {
         if (book.coverImagePublicId) {
             await deleteFromCloudinary(book.coverImagePublicId)
         }
-        const uploaded = await uploadOnCloudinary(req.files.coverImage[0].path)
+        const uploaded = await uploadOnCloudinary(req.files.coverImage[0].buffer)
         if (!uploaded) throw new ApiError(500, "Cover image upload failed")
         book.coverImage         = uploaded.secure_url
         book.coverImagePublicId = uploaded.public_id
@@ -154,7 +155,7 @@ const updateBook = asyncHandler(async (req, res) => {
     // Extra images update
     if (req.files?.images?.length) {
         // Purani images delete karo
-        for (const img of book.images) {
+       for (const img of book.images || []) {
             if (img.publicId) {
                 await deleteFromCloudinary(img.publicId)
             }
@@ -162,8 +163,9 @@ const updateBook = asyncHandler(async (req, res) => {
         // Nai images upload karo
         book.images = []
         for (const file of req.files.images) {
-            const uploaded = await uploadOnCloudinary(file.path)
-            if (uploaded) {
+       if (!file?.buffer) continue
+       const uploaded = await uploadOnCloudinary(file.buffer)           
+ if (uploaded) {
                 book.images.push({
                     url:      uploaded.secure_url,
                     publicId: uploaded.public_id
@@ -263,7 +265,7 @@ const deleteBook = asyncHandler(async (req, res) => {
     if (book.coverImagePublicId) {
         await deleteFromCloudinary(book.coverImagePublicId)
     }
-    for (const img of book.images) {
+    for (const img of book.images || []) {
         if (img.publicId) await deleteFromCloudinary(img.publicId)
     }
 

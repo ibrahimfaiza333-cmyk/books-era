@@ -1,19 +1,10 @@
 import multer from "multer"
 import path from "path"
-import fs from "fs"
 import ApiError from "../utils/ApiError.js"
-
-// Absolute temp path
-const tempPath = path.join(process.cwd(), "public/temp")
-
-// Auto create folder if missing
-if (!fs.existsSync(tempPath)) {
-    fs.mkdirSync(tempPath, { recursive: true })
-}
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, tempPath)
+        cb(null, path.resolve("public/temp"))
     },
 
     filename: function (req, file, cb) {

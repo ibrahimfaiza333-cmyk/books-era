@@ -4,30 +4,27 @@ import { Book }  from "../models/books.model.js"
 import ApiError  from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 
-const FREE_DELIVERY_THRESHOLD = 3000
+const FREE_DELIVERY_THRESHOLD = 10000
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const calculateDelivery = (totalAmount) => {
-    return totalAmount >= FREE_DELIVERY_THRESHOLD ? 0 : 200
+    return totalAmount >= FREE_DELIVERY_THRESHOLD ? 0 : 300
 }
 
-// ─── Controllers ──────────────────────────────────────────────────────────────
 
 // GET /api/v1/cart
 const getCart = asyncHandler(async (req, res) => {
     let cart = await Cart.findOne({ user: req.user._id })
         .populate("items.book", "title coverImage price discountPrice stock isActive")
 
-    // Agar cart nahi hai toh empty cart return karo
     if (!cart) {
         return res.status(200).json(
             new ApiResponse(200, {
                 items:           [],
                 totalAmount:     0,
                 totalItems:      0,
-                deliveryCharges: 200,
-                finalAmount:     200,
+                deliveryCharges: 300,
+                finalAmount:     300,
                 freeDeliveryOn:  FREE_DELIVERY_THRESHOLD
             }, "Cart is empty")
         )

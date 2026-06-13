@@ -153,7 +153,7 @@ const createOrder = asyncHandler(async (req, res) => {
         { items: [], totalAmount: 0, totalItems: 0 }
     )
 
-    // ✅ Create Notification for User
+    //  Create Notification for User
     try {
         await Notification.create({
             user: req.user._id,
@@ -164,7 +164,7 @@ const createOrder = asyncHandler(async (req, res) => {
         console.error("Error creating notification:", notifErr)
     }
 
-    // ✅ Create Notifications for Admin (New Order & Low Stock)
+    // Create Notifications for Admin (New Order & Low Stock)
     try {
         const admins = await User.find({ role: "admin" }).select("_id")
         console.log("🔔 DEBUG: admins found =", admins.length)
